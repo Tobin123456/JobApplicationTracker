@@ -5,6 +5,7 @@ import com.example.application_tracker.domain.Company;
 import com.example.application_tracker.domain.Job;
 import com.example.application_tracker.dto.CreateApplicationDto;
 import com.example.application_tracker.dto.ResponseApplicationDto;
+import com.example.application_tracker.mapper.ApplicationMapper;
 import com.example.application_tracker.repository.ApplicationRepository;
 import com.example.application_tracker.repository.CompanyRepository;
 import com.example.application_tracker.repository.JobRepository;
@@ -21,12 +22,15 @@ public class ApplicationService {
     private final JobRepository jobRepository;
     private final ApplicationRepository applicationRepository;
 
+    private final ApplicationMapper applicationMapper;
+
     @Autowired
     public ApplicationService(CompanyRepository companyRepository, JobRepository jobRepository,
-                              ApplicationRepository applicationRepository) {
+                              ApplicationRepository applicationRepository, ApplicationMapper applicationMapper) {
         this.companyRepository = companyRepository;
         this.jobRepository = jobRepository;
         this.applicationRepository = applicationRepository;
+        this.applicationMapper = applicationMapper;
     }
 
     @Transactional
@@ -40,13 +44,13 @@ public class ApplicationService {
         Application application = new Application(job);
         applicationRepository.save(application);
 
-        return new ResponseApplicationDto(job.getTitle(), company.getName(), application.getStatus().name());
+        return applicationMapper.toResponseDto(application);
     }
 
     public List<ResponseApplicationDto> getAllApplications() {
         return applicationRepository.findAll()
                 .stream()
-                .map(a -> new ResponseApplicationDto(a.getJob().getTitle(), a.getJob().getCompany().getName(), a.getStatus().name()))
+                .map(applicationMapper::toResponseDto)
                 .toList();
     }
 }
