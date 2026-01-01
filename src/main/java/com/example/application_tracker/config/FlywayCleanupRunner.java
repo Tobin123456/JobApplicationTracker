@@ -14,7 +14,7 @@ public class FlywayCleanupRunner implements CommandLineRunner {
     }
 
     @Override
-    public void run(String... args) throws Exception {
+    public void run(String... args) {
         flyway.clean();  // Force clean here
         flyway.migrate();  // Then run migrations
     }
