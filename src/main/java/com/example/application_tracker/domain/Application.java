@@ -18,14 +18,13 @@ public class Application {
 
     @OneToOne(optional = false, cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
     @JoinColumn(name = "job_id", unique = true)
-    @SuppressWarnings("FieldMayBeFinal") // lazy loaded associations should not be final
     private Job job;
 
 
     @Enumerated(EnumType.STRING)
     private Status status;
 
-    // JPA requires a no-arg constructor
+    // JPA requires a no-arg constructor!
     protected Application() {
         this.job = null;
         this.status = Status.APPLIED;
