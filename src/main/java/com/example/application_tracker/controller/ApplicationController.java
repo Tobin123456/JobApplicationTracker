@@ -3,6 +3,7 @@ package com.example.application_tracker.controller;
 
 import com.example.application_tracker.dto.CreateApplicationDto;
 import com.example.application_tracker.dto.ResponseApplicationDto;
+import com.example.application_tracker.dto.UpdateApplicationStatusDto;
 import com.example.application_tracker.service.ApplicationService;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
@@ -24,6 +25,7 @@ public class ApplicationController {
     }
 
     @GetMapping
+    @ResponseStatus(HttpStatus.OK)
     @SecurityRequirement(name = "bearerAuth")
     @SecurityRequirement(name = "basicAuth")
     public List<ResponseApplicationDto> getAll() {
@@ -37,4 +39,13 @@ public class ApplicationController {
     public ResponseApplicationDto create(@Valid @RequestBody CreateApplicationDto dto) {
         return applicationService.createApplication(dto);
     }
+
+    @PatchMapping
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @SecurityRequirement(name = "bearerAuth")
+    @SecurityRequirement(name = "basicAuth")
+    public void updateStatus(@Valid @RequestBody UpdateApplicationStatusDto dto) {
+        applicationService.updateApplicationStatus(dto);
+    }
+
 }

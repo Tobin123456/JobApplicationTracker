@@ -5,6 +5,7 @@ import com.example.application_tracker.domain.Company;
 import com.example.application_tracker.domain.Job;
 import com.example.application_tracker.dto.CreateApplicationDto;
 import com.example.application_tracker.dto.ResponseApplicationDto;
+import com.example.application_tracker.dto.UpdateApplicationStatusDto;
 import com.example.application_tracker.mapper.ApplicationMapper;
 import com.example.application_tracker.repository.ApplicationRepository;
 import com.example.application_tracker.repository.CompanyRepository;
@@ -33,12 +34,19 @@ public class ApplicationService {
         this.applicationMapper = applicationMapper;
     }
 
+    public List<ResponseApplicationDto> getAllApplications() {
+        return applicationRepository.findAll()
+                .stream()
+                .map(applicationMapper::toResponseDto)
+                .toList();
+    }
+
     @Transactional
     public ResponseApplicationDto createApplication(CreateApplicationDto dto) {
-        Company company = new Company(dto.getCompanyName());
+        Company company = new Company(dto.companyName());
         companyRepository.save(company);
 
-        Job job = new Job(dto.getJobTitle(), company, dto.getUrl());
+        Job job = new Job(dto.jobTitle(), company, dto.url());
         jobRepository.save(job);
 
         Application application = new Application(job);
@@ -47,10 +55,8 @@ public class ApplicationService {
         return applicationMapper.toResponseDto(application);
     }
 
-    public List<ResponseApplicationDto> getAllApplications() {
-        return applicationRepository.findAll()
-                .stream()
-                .map(applicationMapper::toResponseDto)
-                .toList();
+    @Transactional
+    public void updateApplicationStatus(UpdateApplicationStatusDto dto) {
+        applicationRepository.findById(dto.appID()).ifPresent(application -> application.setStatus(dto.status()));
     }
 }
