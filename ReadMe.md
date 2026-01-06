@@ -6,9 +6,8 @@ A Spring Boot backend for persisting, managing, and tracking job applications. T
 
 ## Features
 
-- CRUD operations for job applications
+- CRUD operations for managing job applications, jobs and companies
 - Track application status (APPLIED, INTERVIEW, OFFER, REJECTED)
-- Manage companies and jobs associated with applications
 - Data persistence using **PostgreSQL**
 - Authentication and authorization support:
     - **Basic Authentication** (via Spring Security)
