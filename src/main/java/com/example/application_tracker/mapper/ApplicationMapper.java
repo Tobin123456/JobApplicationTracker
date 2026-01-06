@@ -8,6 +8,7 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface ApplicationMapper {
 
+    @Mapping(source = "id", target = "appID")
     @Mapping(source = "job.title", target = "jobTitle")
     @Mapping(source = "job.company.name", target = "companyName")
     @Mapping(source = "status", target = "status")
