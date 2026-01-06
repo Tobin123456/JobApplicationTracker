@@ -24,10 +24,10 @@ public class UserService {
 
     @Transactional
     public ResponseCreateUserDto createApplication(CreateUserDto createUserDto) {
-        if (userRepository.existsByUsername(createUserDto.getUsername())) {
+        if (userRepository.existsByUsername(createUserDto.username())) {
             return new ResponseCreateUserDto("Username already taken!");
         }
-        User user = new User(createUserDto.getUsername(), passwordEncoder.encode(createUserDto.getPassword()), createUserDto.getRoles());
+        User user = new User(createUserDto.username(), passwordEncoder.encode(createUserDto.password()), createUserDto.roles());
         userRepository.save(user);
         return new ResponseCreateUserDto("User created successfully");
     }
