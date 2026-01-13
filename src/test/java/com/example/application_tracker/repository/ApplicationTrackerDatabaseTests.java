@@ -4,18 +4,39 @@ import com.example.application_tracker.domain.Application;
 import com.example.application_tracker.domain.Company;
 import com.example.application_tracker.domain.Job;
 import com.example.application_tracker.domain.User;
+import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.util.HashSet;
 import java.util.List;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@Testcontainers
 class ApplicationTrackerRepositoryTest {
+
+    @Container
+    static PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:15")
+            .withDatabaseName("testDB")
+            .withUsername("job_searcher")
+            .withPassword("test");
+
+    @DynamicPropertySource
+    static void configureDatasource(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", postgres::getJdbcUrl);
+        registry.add("spring.datasource.username", postgres::getUsername);
+        registry.add("spring.datasource.password", postgres::getPassword);
+    }
 
     @Autowired
     private CompanyRepository companyRepository;
@@ -29,6 +50,19 @@ class ApplicationTrackerRepositoryTest {
     @Autowired
     private UserRepository userRepository;
 
+    @BeforeAll
+    static void migrate() {
+        // create schemas via flyway before test execute
+        Flyway flyway = Flyway.configure()
+                .dataSource(
+                        postgres.getJdbcUrl(),
+                        postgres.getUsername(),
+                        postgres.getPassword()
+                )
+                .locations("classpath:db/migration") // your migration folder
+                .load();
+        flyway.migrate();
+    }
 
     @Test
     void testCreateApplicationHierarchy() {
@@ -57,7 +91,7 @@ class ApplicationTrackerRepositoryTest {
     @Test
     void testCreateUserHierarchy() {
         // Create and save entities
-        User user = userRepository.save(new User("FactorioEnjoyer", "theFactoryMustGrow", new HashSet<String>(List.of("Engineer"))));
+        User user = userRepository.save(new User("FactorioEnjoyer", "theFactoryMustGrow", new HashSet<>(List.of("Engineer"))));
 
         // Read back from DB
         User userDbWithID = userRepository.findById(user.getId()).orElseThrow();
