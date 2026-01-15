@@ -96,16 +96,16 @@ Choose the method that best fits your workflow.
 1. Ensure your PostgreSQL database is running
 2. Package the Application into a JAR
    ```bash
-   ./mvnw clean package
+   ./mvnw clean package -DskipTests
    ```
 3. Run the Packaged JAR, example:
     ```bash
-   java -jar target/Application_Tracker-0.0.1-SNAPSHOT.jar \
-    --SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/application_tracker \
-    --SPRING_DATASOURCE_USERNAME=postgres \
-    --SPRING_DATASOURCE_PASSWORD=password \
-    --JWT_SECRET_KEY=MySuperSecretKeyForJWTs! \
-    --CORS_ALLOWED_ORIGINS=http://localhost:3000
+   java -jar target/Application_Tracker-1.0.0.jar `
+   --SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/application_data `
+   --SPRING_DATASOURCE_USERNAME=job_searcher `
+   --SPRING_DATASOURCE_PASSWORD=231198 `
+   --JWT_SECRET_KEY="MySuperSecretKeyForJWTsThe_Factory_Must_Grow!" `
+   --CORS_ALLOWED_ORIGINS=http://localhost:4200
    ```
 
 ---
